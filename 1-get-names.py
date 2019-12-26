@@ -90,7 +90,33 @@ while True:
     time.sleep(5)
     # it is better to use this type of waits:
     https://selenium-python.readthedocs.io/waits.html
+
     
+    # Deselect_all
+    driver.find_element_by_xpath(".//*[contains(text(), 'select all')]").click()
+
+    # tick the checkbox
+    i = 1
+    selected_row = driver.find_element_by_id("chk_"+str(i))
+    driver.execute_script("arguments[0].click();", selected_row)
+    
+    
+    deflnDesc
+    dflSeq
+    result_table.find_element_by_xpath("//tr[@class='odd dflLnk']").click()
+    
+    driver.find_element_by_xpath(".//*[contains(text(), 'dtr')]").click()
+
+    
+    
+    
+    # Select the row if e satisfies the condition
+    driver.find_element_by_id("deflnDesc_1").click()
+    
+    # Back to main tab view
+    check_list = driver.find_element_by_id("chk_2")
+    driver.find_element_by_id("btnDescr").click()
+
     
     doc = BeautifulSoup(driver.page_source, 'html.parser')
 

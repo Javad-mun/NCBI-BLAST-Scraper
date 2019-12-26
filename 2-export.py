@@ -5,7 +5,7 @@ Created on Wed Dec 25 17:50:10 2019
 
 @author: javad
 """
-
+import pandas as pd
 import os
 os.getcwd()
 
@@ -19,9 +19,17 @@ with open("output1.html") as fp:
 # find the table 
 table = soup.find('table' ,attrs={'class':'dscTable ui-ncbigrid'})
 
+df = pd.read_html(str(table))
 
 e_list = table.find_all('td',attrs={'class':'c6'})
 
+
+
+# Deselect_all
+driver.find_element_by_xpath(".//*[contains(text(), 'select all')]").click()
+
+
+    
 
 # selecting top five and e values less than threshold
 for i in range(0,5):
@@ -35,13 +43,24 @@ for i in range(0,5):
             # go back to selenium driver and
             # select the row    
             print("selected")
+            # tick the checkbox
+            selected_row = driver.find_element_by_id("chk_"+str(i))
+            driver.execute_script("arguments[0].click();", selected_row)
+    
+            
+            
+            
+            
     except:
         print("something is wrong but don't worry, we will continue")
         
         
-# Go to selenium driver and click on text
-        # Also on FASTA
-        # Also save the drive
+    # Read the table to pd data frame and select the first row and check if it matches the query
+    
+    
+    # Go to selenium driver and click on text
+    # Also on FASTA
+    # Also save the drive
         
         
         

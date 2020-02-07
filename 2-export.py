@@ -13,7 +13,7 @@ os.getcwd()
 # convert the object from selenium to a soup object instead of reading from the disk
 from bs4 import BeautifulSoup
 
-with open("output1.html") as fp:
+with open("output1.html", "r") as fp:
     soup = BeautifulSoup(fp)
 
 # find the table 
@@ -28,7 +28,9 @@ e_list = table.find_all('td',attrs={'class':'c6'})
 # Deselect_all
 driver.find_element_by_xpath(".//*[contains(text(), 'select all')]").click()
 
-
+# Use this to conver to pandas
+# Read the table to pd data frame and select the first row and check if it matches the query
+https://stackoverflow.com/questions/50633050/scrape-tables-into-dataframe-with-beautifulsoup/50633450
     
 
 # selecting top five and e values less than threshold
@@ -55,7 +57,6 @@ for i in range(0,5):
         print("something is wrong but don't worry, we will continue")
         
         
-    # Read the table to pd data frame and select the first row and check if it matches the query
     
     
     # Go to selenium driver and click on text

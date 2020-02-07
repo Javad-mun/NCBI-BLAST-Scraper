@@ -33,6 +33,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from bs4 import BeautifulSoup
+import pandas as pd
 
 
 
@@ -89,24 +90,27 @@ while True:
     #wait for results
     time.sleep(5)
     # it is better to use this type of waits:
-    https://selenium-python.readthedocs.io/waits.html
+    # https://selenium-python.readthedocs.io/waits.html
 
-    
+
+    # read the table
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    table = soup.find('table' ,attrs={'class':'dscTable ui-ncbigrid'})
+
+    df = pd.read_html(str(table))
+
+
+
+
+    #=========== Do this after deciding how many row need to be selected via bs4 ==========#
     # Deselect_all
     driver.find_element_by_xpath(".//*[contains(text(), 'select all')]").click()
 
     # tick the checkbox
-    i = 1
+    i = 1 # select based on the data from the table
     selected_row = driver.find_element_by_id("chk_"+str(i))
     driver.execute_script("arguments[0].click();", selected_row)
     
-    
-    deflnDesc
-    dflSeq
-    result_table.find_element_by_xpath("//tr[@class='odd dflLnk']").click()
-    
-    driver.find_element_by_xpath(".//*[contains(text(), 'dtr')]").click()
-
     
     
     
@@ -117,14 +121,6 @@ while True:
     check_list = driver.find_element_by_id("chk_2")
     driver.find_element_by_id("btnDescr").click()
 
-    
-    doc = BeautifulSoup(driver.page_source, 'html.parser')
-
-    with open("output1.html", "w") as file:
-        file.write(str(doc))
-        
-    file.close()
-        
         
     
     

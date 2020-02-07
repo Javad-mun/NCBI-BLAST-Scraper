@@ -32,6 +32,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import pandas as pd
 
@@ -51,7 +53,7 @@ while True:
     #check for the end of the file
     if ("" == first_line):
         print("file finished")
-        break
+      #  break #uncomment me
     
     # get the name of spicies
     name = first_line.split("_")[1:3]
@@ -88,7 +90,15 @@ while True:
     blast_key.click()
     
     #wait for results
-    time.sleep(5)
+    try:
+        element = WebDriverWait(driver, 20).until(
+            EC.visibility_of((By.ID, "searchOptions"))
+        )
+    finally:
+        print("timeout!")
+        driver.quit()
+        
+    #time.sleep(5)
     # it is better to use this type of waits:
     # https://selenium-python.readthedocs.io/waits.html
 

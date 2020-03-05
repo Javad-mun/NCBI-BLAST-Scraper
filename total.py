@@ -28,16 +28,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
+import numpy as np
 import pandas as pd
 import os
 
 
 print("Hi")
 
+query_threshold = 80
+e_threshold =  1e-5
 
 
-
-column_names = ['Description', 'Max Score', 'Total Score', 'Query Cover', 'E value', 'Per. Ident', 'Accession']
+column_names = ['Description', 'Max Score', 'Total Score', 'Query Cover', 'E value', 'Per. Ident', 'Accession', 'name']
 final_df = pd.DataFrame(columns = column_names)
 
 
@@ -120,26 +122,26 @@ while ("" != current_line):
         blast_key.click()
         
     ##    #wait for results for 3 min max
-        #time.sleep(30)
+        time.sleep(60)
         # be careful about the waits. They request and thus refresh the page
-    #    try:
-    #        element = WebDriverWait(driver, 180).until(
-    #            EC.presence_of_element_located((By.ID, "searchOptions"))
-    #        )
-    #    except:
-    #        print(" Cannot get the search results for ", name)
-    #        # add name to a list of igonred names
-    #        ignored_names.append(name)        
-    #    finally:
-    #        print("Finished waiting for the results!")
-    #        #driver.quit()
-    #        
+        try:
+            element = WebDriverWait(driver, 180).until(
+                EC.presence_of_element_located((By.ID, "searchOptions"))
+            )
+        except:
+            print(" Cannot get the search results for ", name)
+            # add name to a list of igonred names
+            # ignored_names.append(name)        
+        finally:
+            print("Finished waiting for the results!")
+            #driver.quit()
+            
     #   time.sleep(15)
         # it is better to use this type of waits:
         # https://selenium-python.readthedocs.io/waits.html
         # or use implicit waits
-        driver.implicitly_wait(180)
-        driver.find_element_by_id("searchOptions")
+        # driver.implicitly_wait(180)
+        # driver.find_element_by_id("searchOptions")
         
     
         # read the table
@@ -160,22 +162,29 @@ while ("" != current_line):
         for i in range(number_of_rows):
             query_cov = float(df.iloc[i,4].strip('%'))
             e_value =  df.iloc[i,5]
-            query_threshold = 99
-            e_threshold =  1e-5
+
             if (query_cov >= query_threshold and e_value < e_threshold):
                 last_selected_row = i
-            else:
-                break
+
             
             
         if last_selected_row == 0:
             print(name, " doesn't have any matches")
             no_match_names.append(name)
+            temp = pd.DataFrame(np.zeros((1,8)), columns = column_names)
+            temp.iloc[0,:] = "No_Match"
+            temp["name"] = name
+            final_df = pd.concat([final_df, temp])
+
         else:        
             # Deselect_all
             driver.find_element_by_xpath(".//*[contains(text(), 'select all')]").click()
             time.sleep(3)
         
+                        
+            if last_selected_row > 9:
+                last_selected_row = 9
+                
         
             # tick the checkbox
             # select based on the data from the table
@@ -184,6 +193,7 @@ while ("" != current_line):
                 driver.execute_script("arguments[0].click();", selected_row)
                 print(i+1)
                 
+
                 
             time.sleep(3)
             # download the text file    
@@ -196,7 +206,8 @@ while ("" != current_line):
             os.rename(old_file_name, download_dir + "/" + name + ".txt")
             
             time.sleep(2)
-            temp = df.iloc[0:last_selected_row,1:8]
+            temp = df.iloc[0:last_selected_row+1,1:8]
+            temp["name"] = name
             final_df = pd.concat([final_df, temp])
             try:
                 temp.to_csv(download_dir + "/" + name + ".csv")
@@ -210,7 +221,9 @@ while ("" != current_line):
         
     finally:          
         driver.quit()
-        time.sleep(60)
+        time.sleep(10)
+        final_df.to_csv("/home/javad/Documents/Ati/ncbi-results/final_results.csv")
+
     
     
     
@@ -230,7 +243,7 @@ with open("/home/javad/Documents/Ati/ncbi-results/no-match.txt", 'w') as f:
     for item in no_match_names:
         f.write("%s\n" % item)        
 
-final_df.to_csv("/home/javad/Documents/Ati/ncbi-results/final_results.csv")
+final_df.to_csv("/home/javad/Documents/Ati/ncbi-results/final_final_results.csv")
 
 
 
